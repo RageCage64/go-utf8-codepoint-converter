@@ -1,7 +1,6 @@
 package codepoint_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/RageCage64/go-utf8-codepoint-converter/codepoint"
@@ -65,7 +64,6 @@ func TestConvert(t *testing.T) {
 			})
 
 			t.Run("\\U format", func(t *testing.T) {
-				fmt.Println(tc.codepointSlashU)
 				testCodepoint(t, tc.codepointSlashU)
 			})
 		})

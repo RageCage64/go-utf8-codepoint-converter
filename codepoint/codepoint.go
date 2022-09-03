@@ -44,7 +44,7 @@ var (
 )
 
 var (
-	startByteTable = map[int]int{
+	startByteTable = map[byte]int{
 		0b00000000: 7,
 		0b10000000: 6,
 		0b11000000: 5,
@@ -59,13 +59,13 @@ var (
 		4: 21,
 	}
 
-	oneByteEncode   = []int{0b00000000}
-	twoByteEncode   = []int{0b11000000, 0b10000000}
-	threeByteEncode = []int{0b11100000, 0b10000000, 0b10000000}
-	fourByteEncode  = []int{0b11110000, 0b10000000, 0b10000000, 0b10000000}
+	oneByteEncode   = []byte{0b00000000}
+	twoByteEncode   = []byte{0b11000000, 0b10000000}
+	threeByteEncode = []byte{0b11100000, 0b10000000, 0b10000000}
+	fourByteEncode  = []byte{0b11110000, 0b10000000, 0b10000000, 0b10000000}
 )
 
-func getStartBytes(value int) ([]int, error) {
+func getStartBytes(value int) ([]byte, error) {
 	if 0 <= value && value <= 0x7F {
 		return oneByteEncode, nil
 	} else if 0x80 <= value && value <= 0x7FF {
@@ -79,7 +79,7 @@ func getStartBytes(value int) ([]int, error) {
 	return nil, ErrInvalidWidth
 }
 
-func convertCodepoint(value int, startBytes []int) ([]byte, error) {
+func convertCodepoint(value int, startBytes []byte) ([]byte, error) {
 	// Pad the required number of 0 bits to the left of the binary
 	// representation of the hex value. This is based on the width
 	// (1, 2, 3, or 4) which is the same as the length of the starting
@@ -101,12 +101,11 @@ func convertCodepoint(value int, startBytes []int) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		value := int(uintValue)
+		value := byte(uintValue)
 
 		// Use an or operation to store the significant bytes of
 		// the value into the remaining bits of the start byte.
-		utf8Byte := byte(currStartByte | value)
-		utf8Bytes = append(utf8Bytes, utf8Byte)
+		utf8Bytes = append(utf8Bytes, currStartByte|value)
 
 		// Slice the bits we just used off the codepoint binary
 		// string.
